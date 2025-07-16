@@ -3,7 +3,6 @@ name: Merge Feature Branches
 on:
   # Manual trigger
   workflow_dispatch:
-  push:
   
   # Run on a schedule (e.g., every day at midnight UTC)
   schedule:
@@ -87,7 +86,7 @@ jobs:
           commit-message: "Merge all feature branches into ${{ steps.vars.outputs.base_branch }}"
           branch: ${{ steps.vars.outputs.merged_branch }}
           base: ${{ steps.vars.outputs.base_branch }}
-          delete-branch: false
+          delete-branch: true
           title: "Merge all feature branches into ${{ steps.vars.outputs.base_branch }}"
           body: |
             ## Automated Branch Merge
