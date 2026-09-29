@@ -33,7 +33,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
-import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import loci.formats.FormatTools;
 import ome.io.nio.DimensionsOutOfBoundsException;
@@ -210,7 +209,7 @@ public class ZarrPixelBuffer implements PixelBuffer {
         if (axesOrder.containsKey(Axis.Z)) {
             originalZIndex = offset[axesOrder.get(Axis.Z)];
             if (getSizeZ() != getTrueSizeZ()) {
-                offset[axesOrder.get(Axis.Z)] = zIndexMap.get(originalZIndex);
+                offset[axesOrder.get(Axis.Z)] = zIndexMap.get((int) originalZIndex);
                 shape[axesOrder.get(Axis.Z)] = 1;
             }
         }
