@@ -259,7 +259,11 @@ public class ZarrPixelBuffer implements PixelBuffer {
      * @see #getMultiscalesMetadata()
      */
     public List<Map<String, String>> getDatasets() {
-        Map<String, Object> multiscales = getMultiscalesMetadata();
+        List<Map<String, Object>> tmp = getMultiscalesMetadata();
+        if (tmp.isEmpty()) {
+            throw new IllegalArgumentException("No multiscales metadata found");
+        }
+        Map<String, Object> multiscales = tmp.get(0);
         Object datasets = multiscales.get("datasets");
         return Utils.castToListOfStringMap(datasets);
     }
@@ -274,9 +278,12 @@ public class ZarrPixelBuffer implements PixelBuffer {
             return axesOrder;
         }
         axesOrder = new HashMap<Axis, Integer>();
-        Map<String, Object> multiscales = getMultiscalesMetadata();
-        String version = (String) multiscales.get("version");
-        Object axes = multiscales.get("axes");
+        List<Map<String, Object>> multiscales = getMultiscalesMetadata();
+        if (multiscales.isEmpty()) {
+            throw new IllegalArgumentException("No multiscales metadata found");
+        }
+        String version = (String) multiscales.get(0).get("version");
+        Object axes = multiscales.get(0).get("axes");
         if (axes == null) {
             // The axes metadata was introduced in version 0.3 of the
             // OME-Zarr specification. Prior to this, all arrays were
@@ -315,14 +322,9 @@ public class ZarrPixelBuffer implements PixelBuffer {
      * @see #getRootGroupAttributes()
      * @see #getDatasets()
      */
-    public Map<String, Object> getMultiscalesMetadata() {
+    public List<Map<String, Object>> getMultiscalesMetadata() {
         Object multiscales = rootGroupAttributes.get("multiscales");
-        try {
-            // There should only be one multiscale entry anyway
-            return Utils.castToListOfObjectMap(multiscales).get(0);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("No multiscales metadata found");
-        }
+        return Utils.castToListOfObjectMap(multiscales);
     }
 
     /**
@@ -854,7 +856,11 @@ public class ZarrPixelBuffer implements PixelBuffer {
             return resolutionPaths;
         }
 
-        Map<String, Object> multiscales = getMultiscalesMetadata();
+        List<Map<String, Object>> tmp = getMultiscalesMetadata();
+        if (tmp.isEmpty()) {
+            throw new IllegalArgumentException("No multiscales metadata found");
+        }
+        Map<String, Object> multiscales = tmp.get(0);
         List<Map<String, Object>> datasets = Utils.castToListOfObjectMap(
             multiscales.get("datasets"));
         resolutionPaths = new String[datasets.size()];
