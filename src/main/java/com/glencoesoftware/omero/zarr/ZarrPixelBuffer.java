@@ -856,13 +856,7 @@ public class ZarrPixelBuffer implements PixelBuffer {
             return resolutionPaths;
         }
 
-        List<Map<String, Object>> tmp = getMultiscalesMetadata();
-        if (tmp.isEmpty()) {
-            throw new IllegalArgumentException("No multiscales metadata found");
-        }
-        Map<String, Object> multiscales = tmp.get(0);
-        List<Map<String, Object>> datasets = Utils.castToListOfObjectMap(
-            multiscales.get("datasets"));
+        List<Map<String, String>> datasets = getDatasets();
         resolutionPaths = new String[datasets.size()];
         for (int i = 0; i < datasets.size(); i++) {
             resolutionPaths[i] = datasets.get(i).get("path").toString();
